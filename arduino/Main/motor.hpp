@@ -8,6 +8,8 @@ class Motor
 public:
     const int PWM_FREQ = 1000;
     const int PWM_RES  = 8;
+    const int RAMP_TICK_PERIOD_MS = 20;
+    const int RAMP_STEP_PERCENT = 10;
 
     
     /**
@@ -24,7 +26,7 @@ public:
 
         ledcAttach( pinEnable, PWM_FREQ, PWM_RES );
 
-        setPower( 0 );
+        setPowerDirect( 0 );
     }
 
 
@@ -32,9 +34,10 @@ public:
      * Setzt die Motorleistung
      * @param value     -100..100; höhere Werte werden abgeschnitten
      */
-    void setPower( int value )
+    void setPowerDirect( int value )
     {
         value = saturate( value );
+        m_powerCurr = value;
         
         if ( value < 0 )
         {
@@ -51,6 +54,51 @@ public:
     
             // PWM richtigrum
             ledcWrite( m_pinEnable, value * 255 / 100 );
+        }
+    }
+
+
+    void setPower( int value )
+    {
+        value = saturate( value );
+        m_powerTarget = value;
+        m_rampStartMs = 0;
+    }
+
+
+    void tick()
+    {
+        unsigned long now = millis();
+
+        if ( now >= ( m_rampStartMs + RAMP_TICK_PERIOD_MS) )
+        {
+            m_rampStartMs = now;
+            int diff = m_powerTarget - m_powerCurr;
+
+            if ( diff > 0 )
+            {
+                // wir müssen vorwärts schneller werden
+                if ( diff >= RAMP_STEP_PERCENT )
+                {
+                    setPowerDirect( m_powerCurr + RAMP_STEP_PERCENT );
+                }
+                else
+                {
+                    setPowerDirect( m_powerTarget );
+                }
+            }
+            else
+            {
+                // wir müssen rückwärts schneller werden
+                if ( -diff >= RAMP_STEP_PERCENT )
+                {
+                    setPowerDirect( m_powerCurr - RAMP_STEP_PERCENT );
+                }
+                else
+                {
+                    setPowerDirect( m_powerTarget );
+                }
+            }
         }
     }
 
@@ -78,4 +126,7 @@ private:
     int m_pinEnable;
     int m_pinPhase;
     //int m_pwmChannel;
+    int m_powerTarget;
+    int m_powerCurr;
+    unsigned long m_rampStartMs;
  };

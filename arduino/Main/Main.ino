@@ -127,4 +127,9 @@ void loop()
         digitalWrite( PIN_LED, blinkState ? HIGH : LOW );
     }
     
+    motorFrontLeft.tick();
+    motorFrontRight.tick();
+    motorRearLeft.tick();
+    motorRearRight.tick();
+
 }
