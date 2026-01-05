@@ -18,6 +18,9 @@ Nützliche Links
 - alle Espressif Datenblätter und Dokumentationen:
   https://www.espressif.com/en/support/documents/technical-documents?keys=
   
-  - Motortreiber:
-    https://www.pololu.com/product/2135
-    
+- Motortreiber:
+  https://www.pololu.com/product/2135
+
+- Servos:
+  https://rn-wissen.de/wiki/index.php?title=Servos
+      
