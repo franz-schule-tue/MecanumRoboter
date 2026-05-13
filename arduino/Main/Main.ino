@@ -8,6 +8,7 @@
 #include <BluetoothSerial.h>
 
 #include "motor.hpp"
+#include "servo.hpp"
 //#include "us_sensor.hpp"
 
 // Definition der Mikrocontroller-Pins
@@ -20,12 +21,12 @@
 #define PIN_MOTOR_PHASE_REAR_LEFT       22
 #define PIN_MOTOR_PHASE_REAR_RIGHT      32
 #define PIN_LED                         2
-
-// Definition der PWM-Kanäle
-// #define PWM_CHAN_FRONT_LEFT             0
-// #define PWM_CHAN_FRONT_RIGHT            1
-// #define PWM_CHAN_REAR_LEFT              2
-// #define PWM_CHAN_REAR_RIGHT             3
+#define PIN_SERVO_1                     13
+#define PIN_SERVO_2                     12
+#define PIN_SERVO_3                     14
+#define PIN_SERVO_4                     15
+#define PIN_SERVO_5                     4
+#define PIN_SERVO_6                     5
 
 
 BluetoothSerial bt;
@@ -33,7 +34,12 @@ Motor           motorFrontLeft{  PIN_MOTOR_ENABLE_FRONT_LEFT,  PIN_MOTOR_PHASE_F
 Motor           motorFrontRight{ PIN_MOTOR_ENABLE_FRONT_RIGHT, PIN_MOTOR_PHASE_FRONT_RIGHT /*, PWM_CHAN_FRONT_RIGHT*/ };
 Motor           motorRearLeft{   PIN_MOTOR_ENABLE_REAR_LEFT,   PIN_MOTOR_PHASE_REAR_LEFT /*,   PWM_CHAN_REAR_LEFT */  };
 Motor           motorRearRight{  PIN_MOTOR_ENABLE_REAR_RIGHT,  PIN_MOTOR_PHASE_REAR_RIGHT /*,  PWM_CHAN_REAR_RIGHT */  };
-
+Servo           servo1{ PIN_SERVO_1 };
+Servo           servo2{ PIN_SERVO_2 };
+Servo           servo3{ PIN_SERVO_3 };
+Servo           servo4{ PIN_SERVO_4 };
+Servo           servo5{ PIN_SERVO_5 };
+Servo           servo6{ PIN_SERVO_6 };
 
 unsigned long aliveTime = 0;
 unsigned long blinkTime = 0;
@@ -105,6 +111,31 @@ void loop()
         else if ( rd.startsWith( "MRR" ) )
         {
             motorRearRight.setPower( rd.substring( 3 ).toInt() );
+        }
+        // TODO: generisch mit Array aus Servos
+        else if ( rd.startsWith( "S1" ) )
+        {
+            servo1.setDeciPercent( rd.substring( 2 ).toInt() );
+        }
+        else if ( rd.startsWith( "S2" ) )
+        {
+            servo2.setPercent( rd.substring( 2 ).toInt() );
+        }
+        else if ( rd.startsWith( "S3" ) )
+        {
+            servo3.setPercent( rd.substring( 2 ).toInt() );
+        }
+        else if ( rd.startsWith( "S4" ) )
+        {
+            servo4.setPercent( rd.substring( 2 ).toInt() );
+        }
+        else if ( rd.startsWith( "S5" ) )
+        {
+            servo5.setPercent( rd.substring( 2 ).toInt() );
+        }
+        else if ( rd.startsWith( "S6" ) )
+        {
+            servo6.setPercent( rd.substring( 2 ).toInt() );
         }
         else if ( rd.startsWith( "AL" ) )
         {
